@@ -46,9 +46,14 @@ def change_with_detail(year, month, day, hour, minute, second):
     }
 
     date_str = date_command_template % table
-    print "change system datetime with: ###", date_str, "###"
+    do_change_sys_datetime(date_str)
 
+
+def do_change_sys_datetime(date_str):
+    click.secho("change system datetime with: ### %s ###" % date_str,
+                bold=True, fg="yellow")
     os.system(date_str)
+
 
 if __name__ == '__main__':
     change_with_detail()
