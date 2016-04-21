@@ -3,6 +3,7 @@
 
 import os
 import datetime
+import time
 import click
 
 date_command_template = ("date %(month)02d%(day)02d%(hour)02d"
@@ -30,27 +31,41 @@ __second = __now.second
               help='year range in 0-59')
 @click.option('--second', '-S', type=int, default=__second,
               help='year range in 0-59')
-def change_with_detail(year, month, day, hour, minute, second):
+@click.option('--timestamp', '-T', type=int, default=None,
+              help='timestamp')
+def change_with_detail(year, month, day, hour, minute, second, timestamp):
     """
     Quick python script to change system date and time.\n
-    More friendly compare to Unix `date` command
+    More friendly compare to Unix `date` command.\n
+    if --timestamp or -T are specified, other params will be ignored.
     """
 
-    table = {
-        'year': year,
-        'month': month,
-        'day': day,
-        'hour': hour,
-        'minute': minute,
-        'second': second,
-    }
+    if timestamp is not None:
+        ltime = time.localtime(timestamp)
+        table = {
+            'year': ltime.tm_year,
+            'month': ltime.tm_mon,
+            'day': ltime.tm_mday,
+            'hour': ltime.tm_hour,
+            'minute': ltime.tm_min,
+            'second': ltime.tm_sec,
+        }
+    else:
+        table = {
+            'year': year,
+            'month': month,
+            'day': day,
+            'hour': hour,
+            'minute': minute,
+            'second': second,
+        }
 
     date_str = date_command_template % table
     do_change_sys_datetime(date_str)
 
 
 def do_change_sys_datetime(date_str):
-    click.secho("change system datetime with: ### %s ###" % date_str,
+    click.secho("change system datetime using cmd: ### %s ###" % date_str,
                 bold=True, fg="yellow")
     os.system(date_str)
 
